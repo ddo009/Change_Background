@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "com.choinisae.donghaechoi.change_background_1"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "1.0.6"
     }
     buildTypes {
         release {
@@ -17,13 +17,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:design:23.1.1'
-
+    compile 'com.facebook.stetho:stetho:1.3.1'
+    compile files('libs/adlibr.4.2.5.4.jar')
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
+    compile project(':abl')
 }
