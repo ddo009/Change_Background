@@ -3,9 +3,9 @@
     package="com.choinisae.donghaechoi.change_background_1">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
-    <uses-permission android:name="android.permission.vending.BILLING"/>
+    <uses-permission android:name="android.permission.vending.BILLING" />
 
     <application
         android:name=".MyApplication"

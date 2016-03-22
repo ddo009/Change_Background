@@ -44,7 +44,7 @@ public class MyService extends Service {
 
     void registerRestartAlarm() {
         Log.d(TAG, "registerRestartAlarm");
-        Intent intent = new Intent(MyService.this, MyService.class);
+        Intent intent = new Intent(MyService.this, RestartService.class);
         intent.setAction(RestartService.ACTION_RESTART_SERVICE);
         PendingIntent sender = PendingIntent.getBroadcast(
                 MyService.this, 0, intent, 0);
@@ -53,6 +53,7 @@ public class MyService extends Service {
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE); // 알람 서비스 등록
         am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime,
                 10000, sender); // 알람 반복 주기
+        startService(intent);
     }
 
     void unregisterRestartAlarm() {

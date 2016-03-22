@@ -29,7 +29,7 @@ public class MyCursorAdapter extends CursorAdapter {
             @Override
             public Bitmap getBitmap(String position) {
                 // ListView 등의 position 에 표시할 Bitmap을 정의하여 리턴
-                options.inSampleSize = 8;
+                options.inSampleSize = 2;
                 return BitmapFactory.decodeFile(position , options);
             }
         });
@@ -48,9 +48,6 @@ public class MyCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder holder = (ViewHolder) view.getTag();
         mAsyncBitmapLoader.loadBitmap(cursor.getString(1), holder.image);
-//        Bitmap bitmap = BitmapFactory.decodeFile(cursor.getString(1));
-//        options.inSampleSize = 8;
-//        holder.image.setImageBitmap(bitmap);
     }
 
     private static class ViewHolder {

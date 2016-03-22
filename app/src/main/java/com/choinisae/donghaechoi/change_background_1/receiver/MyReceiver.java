@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
 
 import com.choinisae.donghaechoi.change_background_1.facade.ImageFacade;
 
@@ -28,25 +27,28 @@ public class MyReceiver extends BroadcastReceiver {
             cursor.move(random);
             String picturePath = cursor.getString(1);
 
-            DisplayMetrics dm = context.getResources().getDisplayMetrics();
-            int width = dm.widthPixels;
-            int height = dm.heightPixels;
+            // 무쓸모 코드
+//            DisplayMetrics dm = context.getResources().getDisplayMetrics();
+//            int width = dm.widthPixels;
+//            int height = dm.heightPixels;
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 2;
 
-            float widthScale = options.outWidth / width;
-            float heightScale = options.outHeight / height;
-            float scale = widthScale > heightScale ? widthScale : heightScale;
+//            float widthScale = options.outWidth / width;
+//            float heightScale = options.outHeight / height;
+//            float scale = widthScale > heightScale ? widthScale : heightScale;
 
-            if (scale >= 8) {
-                options.inSampleSize = 8;
-            } else if (scale >= 6) {
-                options.inSampleSize = 6;
-            } else if (scale >= 4) {
-                options.inSampleSize = 4;
-            }
-            Bitmap bitmap = BitmapFactory.decodeFile(picturePath, options);
+//            if (scale >= 8) {
+//                options.inSampleSize = 8;
+//            } else if (scale >= 6) {
+//                options.inSampleSize = 6;
+//            } else if (scale >= 4) {
+//                options.inSampleSize = 4;
+//            }
+
+
+            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
             try {
                 wallpaperManager.setBitmap(bitmap);
             } catch (IOException e) {
