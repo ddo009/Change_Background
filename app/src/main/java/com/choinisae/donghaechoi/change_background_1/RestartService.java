@@ -11,7 +11,7 @@ import android.content.Intent;
 public class RestartService {
 
     public static String ACTION_RESTART_SERVICE;
-    public void onReceive(Context context, Intent intent) {
+    public static void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION_RESTART_SERVICE)) {
             Intent i = new Intent(context, MyService.class);
             context.startService(i);

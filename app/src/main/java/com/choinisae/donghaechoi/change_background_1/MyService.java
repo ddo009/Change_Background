@@ -53,7 +53,6 @@ public class MyService extends Service {
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE); // 알람 서비스 등록
         am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime,
                 10000, sender); // 알람 반복 주기
-        startService(intent);
     }
 
     void unregisterRestartAlarm() {

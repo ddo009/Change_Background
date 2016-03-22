@@ -27,7 +27,7 @@ public class MyReceiver extends BroadcastReceiver {
             cursor.move(random);
             String picturePath = cursor.getString(1);
 
-            // 무쓸모 코드
+
 //            DisplayMetrics dm = context.getResources().getDisplayMetrics();
 //            int width = dm.widthPixels;
 //            int height = dm.heightPixels;
@@ -46,8 +46,6 @@ public class MyReceiver extends BroadcastReceiver {
 //            } else if (scale >= 4) {
 //                options.inSampleSize = 4;
 //            }
-
-
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
             try {
                 wallpaperManager.setBitmap(bitmap);

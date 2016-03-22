@@ -14,30 +14,32 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
+import com.choinisae.donghaechoi.change_background_1.adapter.MyRecyclerAdapter;
 import com.choinisae.donghaechoi.change_background_1.facade.ImageFacade;
 import com.mocoplex.adlib.AdlibActivity;
 
 import java.io.File;
 import java.io.IOException;
 
-public class MainActivity extends AdlibActivity implements View.OnClickListener, AdapterView.OnItemLongClickListener {
+public class MainActivity extends AdlibActivity implements View.OnClickListener, MyRecyclerAdapter.OnItemClickListener {
 
     private final int GALLERY_PICK = 1000;
     private ImageFacade mFacade;
     private MyCursorAdapter mMyCursorAdapter;
     public static final int MY_REQUEST_CODE = 100;
     private String TAG = "TAG";
-    private static final String TEMP_PHOTO_FILE = "temp.jpg";
     private final int IMAGE_CROP_REQUESTCODE = 2000;
     private String mFilePath;
     private String mCropFile;
+    private MyRecyclerAdapter mMyRecyclerAdapter;
 
 
     protected void initAds() {
@@ -66,23 +68,31 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
             }
         }
 
-
-
-
         startService(new Intent(this, MyService.class));
         initAds();
         this.setAdsContainer(R.id.ads);
         findViewById(R.id.add_btn).setOnClickListener(this);
         findViewById(R.id.comp_btn).setOnClickListener(this);
         mFacade = new ImageFacade(getApplicationContext());
-        GridView mGridView = (GridView) findViewById(R.id.grid_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         Cursor cursor = mFacade.queryAllpaths();
-        mMyCursorAdapter = new MyCursorAdapter(getApplicationContext(), cursor);
-        mGridView.setAdapter(mMyCursorAdapter);
-        mGridView.setOnItemLongClickListener(this);
+//        mMyCursorAdapter = new MyCursorAdapter(getApplicationContext(), cursor);
+
+        mMyRecyclerAdapter = new MyRecyclerAdapter(cursor);
+
+        DefaultItemAnimator animator = new DefaultItemAnimator();
+        animator.setChangeDuration(1000);
+        animator.setAddDuration(1000);
+        animator.setRemoveDuration(1000);
+
+        mMyRecyclerAdapter.setOnItemClickListener(this);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mMyRecyclerAdapter);
+        recyclerView.setItemAnimator(animator);
+
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -167,7 +177,6 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                 Bitmap bitmap = BitmapFactory.decodeFile(picturePath, options);
                 if (bitmap.getWidth() > bitmap.getHeight()) {
                     // TODO 가로사진 세로로 crop code 추가
-                    Toast.makeText(MainActivity.this, "잘라 낸 후 다시 등록을 시도해주세요", Toast.LENGTH_SHORT).show();
                     Intent cropIntent = new Intent("com.android.camera.action.CROP");
                     cropIntent.setDataAndType(selectImage, "image/*");
                     cropIntent.putExtra("crop", "true");
@@ -192,30 +201,35 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                     startActivityForResult(cropIntent, IMAGE_CROP_REQUESTCODE);
                 } else {
                     mFacade.insertPath(picturePath);
-                    mMyCursorAdapter.swapCursor(mFacade.queryAllpaths());
+                    mMyRecyclerAdapter.swapCursor(mFacade.queryAllpaths());
                 }
             }
             // TODO 크롭시 받아오는 곳
         } else {
             if (requestCode == IMAGE_CROP_REQUESTCODE && resultCode == RESULT_OK && data != null) {
                 mFacade.insertPath(mFilePath);
-                mMyCursorAdapter.swapCursor(mFacade.queryAllpaths());
+                mMyRecyclerAdapter.swapCursor(mFacade.queryAllpaths());
             }
         }
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(View view, int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
         Cursor cursor = mFacade.queryAllpaths();
         cursor.moveToPosition(position);
         int deleted = mFacade.deleteImage("_id=" + cursor.getLong(0), null);
         if (deleted > 0) {
             Toast.makeText(getApplicationContext(), "삭제 되었습니다", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onItemLongClick: " + cursor.getPosition());
+            mMyRecyclerAdapter.swapCursor(mFacade.queryAllpaths());
         } else {
             Toast.makeText(MainActivity.this, "삭제 실패", Toast.LENGTH_SHORT).show();
         }
-        mMyCursorAdapter.swapCursor(mFacade.queryAllpaths());
-        return true;
     }
+
 }
