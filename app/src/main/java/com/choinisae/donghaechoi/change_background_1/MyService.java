@@ -29,6 +29,11 @@ public class MyService extends Service {
         registerReceiver(myReceiver, off);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

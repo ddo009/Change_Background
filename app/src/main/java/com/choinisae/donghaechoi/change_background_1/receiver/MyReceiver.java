@@ -27,25 +27,11 @@ public class MyReceiver extends BroadcastReceiver {
             cursor.move(random);
             String picturePath = cursor.getString(1);
 
-
+            // 디바이스 가로 세로 얻는 코드
 //            DisplayMetrics dm = context.getResources().getDisplayMetrics();
 //            int width = dm.widthPixels;
 //            int height = dm.heightPixels;
 
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inSampleSize = 2;
-
-//            float widthScale = options.outWidth / width;
-//            float heightScale = options.outHeight / height;
-//            float scale = widthScale > heightScale ? widthScale : heightScale;
-
-//            if (scale >= 8) {
-//                options.inSampleSize = 8;
-//            } else if (scale >= 6) {
-//                options.inSampleSize = 6;
-//            } else if (scale >= 4) {
-//                options.inSampleSize = 4;
-//            }
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
             try {
                 wallpaperManager.setBitmap(bitmap);

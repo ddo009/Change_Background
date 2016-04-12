@@ -40,7 +40,7 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
     private String mFilePath;
     private String mCropFile;
     private MyRecyclerAdapter mMyRecyclerAdapter;
-
+    private static final int MY_REQUEST_CODE2 = 200;
 
     protected void initAds() {
         setAdlibKey("56e6bfe60cf27038eed01b0d");
@@ -53,26 +53,15 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
         // android.permission.WRITE_EXTERNAL_STORAGE
         // 권한 확인 메소드
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
-            }
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
-            }
-        }
+        permission();
 
         startService(new Intent(this, MyService.class));
         initAds();
         this.setAdsContainer(R.id.ads);
+
         findViewById(R.id.add_btn).setOnClickListener(this);
         findViewById(R.id.comp_btn).setOnClickListener(this);
+
         mFacade = new ImageFacade(getApplicationContext());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         Cursor cursor = mFacade.queryAllpaths();
@@ -93,6 +82,30 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
         recyclerView.setItemAnimator(animator);
 
     }
+
+    private void permission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // 이전에 거부 하였을 경우 권한 요청
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
+            } else {
+                // 최초 권한 요청
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_REQUEST_CODE);
+            }
+        }
+        // 읽기 권한
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_REQUEST_CODE2);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_REQUEST_CODE2);
+            }
+        }
+        // 쓰기 권한
+    }
+
+    // 퍼미션 확인
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -104,6 +117,15 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                 finish();
             }
         }
+        if (requestCode == MY_REQUEST_CODE2) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(MainActivity.this, "권한 동의를 해주셔야 사용가능합니다.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+
     }
 
     @Override
@@ -177,6 +199,8 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                 Bitmap bitmap = BitmapFactory.decodeFile(picturePath, options);
                 if (bitmap.getWidth() > bitmap.getHeight()) {
                     // TODO 가로사진 세로로 crop code 추가
+
+                    // 암묵적 인텐트
                     Intent cropIntent = new Intent("com.android.camera.action.CROP");
                     cropIntent.setDataAndType(selectImage, "image/*");
                     cropIntent.putExtra("crop", "true");
@@ -185,7 +209,6 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                     cropIntent.putExtra("aspectY", 4);
                     // 리턴 데이터를 받지 않고 파일로 저장
                     cropIntent.putExtra("return-data", false);
-
                     // 저장될 파일명
                     mCropFile = System.currentTimeMillis() + ".jpg";
                     // jpg로 저장

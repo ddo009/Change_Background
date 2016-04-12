@@ -24,9 +24,6 @@ public class ImageFacade {
         // 쓰기 모드로 db 저장소를 얻기
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
-        // INSERT INTO Memo(title, memo, date) VALUES ('title', 'memo', '2000-10-10');
-        // db.execSQL("INSERT INTO Memo(title, memo, date) VALUES ('title', 'memo', '2000-10-10')");
-
         ContentValues values = new ContentValues();
         if (path.length() != 0) {
             values.put(ImageContract.ImageEntry.COLUMN_NAME_PATH, path);
