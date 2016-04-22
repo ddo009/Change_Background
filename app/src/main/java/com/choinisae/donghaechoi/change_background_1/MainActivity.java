@@ -185,17 +185,18 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Cursor mmCursor = null;
         if (requestCode == GALLERY_PICK && resultCode == RESULT_OK && data != null) {
             Uri selectImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectImage,
+            mmCursor = getContentResolver().query(selectImage,
                     filePathColumn, null, null, null);
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 2;
-            if (cursor != null) {
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
+            if (mmCursor != null) {
+                mmCursor.moveToFirst();
+                int columnIndex = mmCursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = mmCursor.getString(columnIndex);
                 Bitmap bitmap = BitmapFactory.decodeFile(picturePath, options);
                 if (bitmap.getWidth() > bitmap.getHeight()) {
                     // TODO 가로사진 세로로 crop code 추가
@@ -233,6 +234,9 @@ public class MainActivity extends AdlibActivity implements View.OnClickListener,
                 mFacade.insertPath(mFilePath);
                 mMyRecyclerAdapter.swapCursor(mFacade.queryAllpaths());
             }
+        }
+        if (mmCursor != null) {
+            mmCursor.close();
         }
     }
 

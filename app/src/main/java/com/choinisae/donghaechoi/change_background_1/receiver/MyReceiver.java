@@ -27,10 +27,6 @@ public class MyReceiver extends BroadcastReceiver {
             cursor.move(random);
             String picturePath = cursor.getString(1);
 
-            // 디바이스 가로 세로 얻는 코드
-//            DisplayMetrics dm = context.getResources().getDisplayMetrics();
-//            int width = dm.widthPixels;
-//            int height = dm.heightPixels;
 
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
             try {
